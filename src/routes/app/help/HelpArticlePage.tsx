@@ -16,6 +16,7 @@
  * (~60-80 chars; same heuristic as Phase 4 Settings maw={480}, scaled for prose).
  */
 
+import { useEffect } from 'react'
 import { Stack, Title, Text, Center, Anchor as MantineAnchor } from '@mantine/core'
 import { Link, useParams } from 'react-router'
 import { PENDO_IDS } from '../../../pendo/PENDO_IDS'
@@ -24,6 +25,19 @@ import { getHelpArticleBySlug } from '../../../help/helpArticles'
 export function HelpArticlePage(): React.JSX.Element {
   const { slug } = useParams<{ slug: string }>()
   const article = slug ? getHelpArticleBySlug(slug) : undefined
+
+  useEffect(() => {
+    if (!slug) return
+    const a = getHelpArticleBySlug(slug)
+    if (a && typeof pendo !== 'undefined') {
+      pendo.track('help_article_viewed', {
+        slug,
+        title: a.title,
+        topic: a.topic,
+        keywordCount: a.keywords.length,
+      })
+    }
+  }, [slug])
 
   if (!article) {
     return (
