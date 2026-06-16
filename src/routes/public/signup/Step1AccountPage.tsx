@@ -88,6 +88,13 @@ export function Step1AccountPage(): React.JSX.Element {
     const { password, ...nonSecretValues } = values
     setWizardPassword(password)
     writeWizardDraftStep('step1', nonSecretValues)
+    if (typeof pendo !== 'undefined') {
+      pendo.track('signup_step1_completed', {
+        hasFirstName: values.firstName.length > 0,
+        hasLastName: values.lastName.length > 0,
+        hasUsername: values.username.length > 0,
+      })
+    }
     navigate('/signup/details')
   })
 
