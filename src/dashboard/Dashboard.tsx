@@ -303,7 +303,21 @@ export function Dashboard(): React.JSX.Element {
             { value: '90', label: '90d' },
           ]}
           value={range}
-          onChange={(v) => setRange(v as Range)}
+          onChange={(v) => {
+            const previousRange = range
+            const newRange = v as Range
+            setRange(newRange)
+            if (typeof pendo !== 'undefined') {
+              const newKpis = computeKpis(tasks, nowRef, newRange)
+              pendo.track('dashboard_time_range_changed', {
+                newRange: v,
+                previousRange,
+                activeTaskCount: newKpis.active,
+                completedInRangeCount: newKpis.completedInRange,
+                overdueCount: newKpis.overdue,
+              })
+            }
+          }}
           data-pendo-id={PENDO_IDS.dashboard.timeRange}
         />
       </Group>

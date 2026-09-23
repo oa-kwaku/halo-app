@@ -37,7 +37,7 @@
  * Phase 3 D-01 placeholder convention forbids router edits at phase boundaries.
  */
 
-import React, { useState, useMemo } from 'react'
+import React, { useState, useMemo, useRef, useEffect } from 'react'
 import { Stack, Group, Title } from '@mantine/core'
 import { IconDownload } from '@tabler/icons-react'
 import dayjs from 'dayjs'
@@ -105,6 +105,26 @@ export function ReportsPage(): React.JSX.Element {
       })
       .sort((a, b) => dayjs(b.createdAt).valueOf() - dayjs(a.createdAt).valueOf())
   }, [allTasks, dateRange, assignee, statusFilter])
+
+  // Track report filter changes (fires on any filter state change, skips initial mount).
+  const isFirstFilterChange = useRef(true)
+  useEffect(() => {
+    if (isFirstFilterChange.current) {
+      isFirstFilterChange.current = false
+      return
+    }
+    if (typeof pendo !== 'undefined') {
+      pendo.track('report_filters_applied', {
+        dateRangeStart: dateRange[0]?.toISOString() ?? '',
+        dateRangeEnd: dateRange[1]?.toISOString() ?? '',
+        assigneeFilter: assignee,
+        statusFilters: statusFilter.join(', '),
+        filteredTaskCount: filteredTasks.length,
+        totalTaskCount: allTasks.length,
+      })
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [dateRange, assignee, statusFilter])
 
   // Defensive narrowing — RequireAuth already gates this path.
   if (!workspaceId || !visitor) return <></>

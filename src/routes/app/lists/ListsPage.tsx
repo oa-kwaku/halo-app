@@ -130,9 +130,27 @@ export function ListsPage(): React.JSX.Element {
             priorityValue={priorityFilter}
             assigneeValue={assigneeFilter}
             onChange={(next) => {
+              const nextStatus = next.status ?? statusFilter
+              const nextPriority = next.priority ?? priorityFilter
+              const nextAssignee = next.assignee ?? assigneeFilter
               if (next.status !== undefined) setStatusFilter(next.status)
               if (next.priority !== undefined) setPriorityFilter(next.priority)
               if (next.assignee !== undefined) setAssigneeFilter(next.assignee)
+              if (typeof pendo !== 'undefined') {
+                const nextFilteredCount = allTasks.filter(
+                  (t) =>
+                    (nextStatus === 'all' || t.status === nextStatus) &&
+                    (nextPriority === 'all' || t.priority === nextPriority) &&
+                    (nextAssignee === 'all' || t.assignee?.id === nextAssignee),
+                ).length
+                pendo.track('task_filters_applied', {
+                  statusFilter: nextStatus,
+                  priorityFilter: nextPriority,
+                  assigneeFilter: nextAssignee,
+                  filteredTaskCount: nextFilteredCount,
+                  totalTaskCount: allTasks.length,
+                })
+              }
             }}
           />
           {filteredTasks.length === 0 && filtersActive ? (
