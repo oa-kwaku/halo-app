@@ -35,7 +35,10 @@ export type TeamTableProps = {
   onRoleChange: (teammateId: string, nextRole: WorkspaceRole) => void
 }
 
-export function TeamTable({ teammates, onRoleChange }: TeamTableProps): React.JSX.Element {
+export function TeamTable({
+  teammates,
+  onRoleChange,
+}: TeamTableProps): React.JSX.Element {
   // Use current time as nowRef for last-active relative formatting.
   // The team page is not anchored to task activity (unlike Dashboard/Reports).
   const nowRefIso = useMemo(() => new Date().toISOString(), [])
@@ -75,16 +78,24 @@ export function TeamTable({ teammates, onRoleChange }: TeamTableProps): React.JS
         <Table.Thead>
           <Table.Tr>
             <Table.Th className={classes.cell}>
-              <Text size="sm" fw={500} c="dimmed">Name</Text>
+              <Text size="sm" fw={500} c="dimmed">
+                Name
+              </Text>
             </Table.Th>
             <Table.Th className={classes.cell}>
-              <Text size="sm" fw={500} c="dimmed">Email</Text>
+              <Text size="sm" fw={500} c="dimmed">
+                Email
+              </Text>
             </Table.Th>
             <Table.Th className={classes.cell}>
-              <Text size="sm" fw={500} c="dimmed">Role</Text>
+              <Text size="sm" fw={500} c="dimmed">
+                Role
+              </Text>
             </Table.Th>
             <Table.Th className={classes.cell}>
-              <Text size="sm" fw={500} c="dimmed">Last active</Text>
+              <Text size="sm" fw={500} c="dimmed">
+                Last active
+              </Text>
             </Table.Th>
           </Table.Tr>
         </Table.Thead>
@@ -92,21 +103,31 @@ export function TeamTable({ teammates, onRoleChange }: TeamTableProps): React.JS
           {orderedTeammates.map((t) => {
             const firstInitial = (t.firstName[0] ?? '').toUpperCase()
             const lastInitial = (t.lastName[0] ?? '').toUpperCase()
-            const initials = firstInitial || lastInitial
-              ? `${firstInitial}${lastInitial}`
-              : (t.email[0] ?? '').toUpperCase()
+            const initials =
+              firstInitial || lastInitial
+                ? `${firstInitial}${lastInitial}`
+                : (t.email[0] ?? '').toUpperCase()
 
             return (
               <Table.Tr key={t.id}>
                 {/* Name cell: avatar + name + Invited badge */}
                 <Table.Td className={classes.cell}>
                   <Group gap={8}>
-                    <Avatar size="sm" color="indigo" radius="xl" src={t.avatar ?? null}>
+                    <Avatar
+                      size="sm"
+                      color="indigo"
+                      radius="xl"
+                      src={t.avatar ?? null}
+                    >
                       {initials}
                     </Avatar>
-                    <Text size="sm">{t.firstName} {t.lastName}</Text>
+                    <Text size="sm">
+                      {t.firstName} {t.lastName}
+                    </Text>
                     {t.status === 'invited' && (
-                      <Badge color="yellow" variant="light" size="sm">Invited</Badge>
+                      <Badge color="yellow" variant="light" size="sm">
+                        Invited
+                      </Badge>
                     )}
                   </Group>
                 </Table.Td>
@@ -119,6 +140,7 @@ export function TeamTable({ teammates, onRoleChange }: TeamTableProps): React.JS
                 {/* Role cell — Mechanism A (D-02): Owner row shows disabled 'Owner' option */}
                 <Table.Td className={classes.cell}>
                   <Select
+                    aria-label={`Role for ${t.firstName} ${t.lastName}`}
                     value={t.workspaceRole}
                     data={
                       t.workspaceRole === 'Owner'
@@ -146,7 +168,9 @@ export function TeamTable({ teammates, onRoleChange }: TeamTableProps): React.JS
                 {/* Last active cell */}
                 <Table.Td className={classes.cell}>
                   <Text size="sm" c={t.lastActiveAt ? undefined : 'dimmed'}>
-                    {t.lastActiveAt ? formatRelative(t.lastActiveAt, nowRefIso) : '—'}
+                    {t.lastActiveAt
+                      ? formatRelative(t.lastActiveAt, nowRefIso)
+                      : '—'}
                   </Text>
                 </Table.Td>
               </Table.Tr>
