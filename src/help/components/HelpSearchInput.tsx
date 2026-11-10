@@ -15,9 +15,13 @@ export type HelpSearchInputProps = {
   onChange: (next: string) => void
 }
 
-export function HelpSearchInput({ value, onChange }: HelpSearchInputProps): React.JSX.Element {
+export function HelpSearchInput({
+  value,
+  onChange,
+}: HelpSearchInputProps): React.JSX.Element {
   return (
     <TextInput
+      aria-label="Search articles"
       placeholder="Search articles"
       leftSection={<IconSearch size={16} />}
       value={value}
